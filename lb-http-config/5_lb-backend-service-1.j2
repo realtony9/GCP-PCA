@@ -1,0 +1,12 @@
+{# Create backend service #}
+gcloud compute backend-services create web-backend-service \
+  --protocol=HTTP \
+  --port-name=http \
+  --health-checks=http-basic-check \
+  --global
+
+{# Add your instance group as the backend to the backend service #}
+  gcloud compute backend-services add-backend web-backend-service \
+  --instance-group=lb-backend-group \
+  --instance-group-zone={{ ZONE }} \
+  --global

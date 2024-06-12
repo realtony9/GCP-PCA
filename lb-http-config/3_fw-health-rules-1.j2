@@ -1,0 +1,12 @@
+{# Create Firewall Rules to allow Health check of Machines #}
+gcloud compute firewall-rules create fw-allow-health-check \
+  --network=default \
+  --action=allow \
+  --direction=ingress \
+  --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+  --target-tags=allow-health-check   {#see tags in template.j2#} \
+  --rules=tcp:80
+
+{# Create a health check for the http load balancer #}
+  gcloud compute health-checks create http http-basic-check \
+  --port 80

@@ -1,0 +1,14 @@
+{# Creates LB using URL maps to route the incoming requests to the default backend service #}
+gcloud compute url-maps create web-map-http \
+    --default-service web-backend-service
+
+{# Create a target HTTP proxy to route requests to your URL map #}
+gcloud compute target-http-proxies create http-lb-proxy \
+    --url-map web-map-http
+
+{# Create a global forwarding rule to route incoming requests to the proxy #}
+gcloud compute forwarding-rules create http-content-rule \
+   --address=lb-ipv4-1\
+   --global \
+   --target-http-proxy=http-lb-proxy \
+   --ports=80

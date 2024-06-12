@@ -1,0 +1,15 @@
+Testing traffic sent to your instances
+In the Google Cloud console, from the Navigation menu, go to Network services > Load balancing.
+
+Click on the load balancer that you just created (web-map-http).
+
+In the Backend section, click on the name of the backend and confirm that the VMs are Healthy. 
+If they are not healthy, wait a few moments and try reloading the page.
+
+When the VMs are healthy, test the load balancer using a web browser, going to http://IP_ADDRESS/, 
+replacing IP_ADDRESS with the load balancer's IP address.
+
+This may take three to five minutes. If you do not connect, wait a minute, and then reload the browser.
+
+Your browser should render a page with content showing the name of the instance that served the page, 
+along with its zone (for example, Page served from: lb-backend-group-xxxx).
