@@ -1,0 +1,41 @@
+{# create env variable for Project #}
+export PROJECT_ID=$(gcloud config get project)
+echo $PROJECT_ID
+
+{# Create Region #}
+gcloud config set compute/region {{ REGION }}
+
+{# Create a directory for the function code #}
+mkdir {{ CF_DIR }} && cd {{ CF_DIR }}
+
+{# Create and open index.js to edit #}
+echo -e "{{ FILE_CONTENT }}" > nano index.js
+
+{# create a new Cloud Storage bucket with makebucket for your function #}
+gsutil mb -p $PROJECT_ID gs://$PROJECT_ID-{{ BUCKET_NAME }}
+
+{# Disable the Cloud Functions API #}
+gcloud services disable cloudfunctions.googleapis.com
+
+{# Re-enable the Cloud Functions API #}
+gcloud services enable cloudfunctions.googleapis.com
+
+{# Add the artifactregistry.reader permission for your appspot service account #}
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+--member="serviceAccount:$PROJECT_ID@appspot.gserviceaccount.com" \
+--role="roles/artifactregistry.reader"
+
+{# Deploy the function to a pub/sub topic named hello_world #}
+gcloud functions deploy {{ CLOUD_FUNCTION_NAME }} \
+  --stage-bucket $PROJECT_ID-{{ BUCKET_NAME }} \
+  --trigger-topic {{ CLOUD_FUNCTION_NAME }} \
+  --runtime nodejs20
+
+{# Verify the status of the function #}
+gcloud functions describe {{ CLOUD_FUNCTION_NAME }}
+
+{# create a message to test the function #}
+DATA=$(printf 'Hello World!'|base64) && gcloud functions call {{ CLOUD_FUNCTION_NAME }} --data '{"data":"'$DATA'"}'
+
+{# Check the logs to see your messages in the log history #}
+gcloud functions logs read {{ CLOUD_FUNCTION_NAME }}

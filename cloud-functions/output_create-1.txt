@@ -1,0 +1,8 @@
+gcloud config set compute/region us-east4
+
+mkdir None && cd None
+
+echo -e "/** \n * Background Cloud Function to be triggered by Pub/Sub. \n * This function is exported by index.js, and executed when \n * the trigger topic receives a message. \n * \n * @param {object} data The event payload. \n * @param {object} context The event metadata. \n */ \n exports.helloWorld = (data, context) => { \n const pubSubMessage = data; \n const name = pubSubMessage.data \n
+    ? Buffer.from(pubSubMessage.data, 'base64').toString() : "Hello World"; \n
+console.log('My Cloud Function: ${name}'); \n };" > nano index.js
+
